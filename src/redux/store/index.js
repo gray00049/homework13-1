@@ -1,28 +1,23 @@
 import { combineReducers, legacy_createStore, compose, applyMiddleware } from 'redux'
-import { combineEpics, createEpicMiddleware } from 'redux-observable'
-import { changeSearchEpic, sendSearchRequest } from '../epics'
+import createSagaMiddleware from "redux-saga"
+import rootSaga from '../saga'
 import searchInputReduser from '../reducers/searchInputReducer'
 
 const reducer = combineReducers({
   search: searchInputReduser
 });
 
-const rootEpic = combineEpics(
-  changeSearchEpic,
-  sendSearchRequest
-);
-
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const epicMiddleware = createEpicMiddleware();
+const sagaMiddleware = createSagaMiddleware();
 
 const store = legacy_createStore(
   reducer,
   composeEnhancers(
-    applyMiddleware(epicMiddleware)
+    applyMiddleware(sagaMiddleware)
   )
 )
 
-epicMiddleware.run(rootEpic);
+sagaMiddleware.run(rootSaga);
 
 export default store;
